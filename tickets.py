@@ -27,6 +27,9 @@ class Ticket:
         """Apila el estado anterior antes de asignar el nuevo estado."""
         self._historial_estados.push(self.estado_actual)
         self.estado_actual = nuevo_estado
+    def __str__(self):
+        """Representación legible del ticket al hacer print(ticket)."""
+        return f"[{self.id_ticket}] {self.titulo} - Estado: {self.estado_actual}"
 
 
 def deshacer_ultimo_cambio(ticket):
@@ -35,7 +38,7 @@ def deshacer_ultimo_cambio(ticket):
     if estado_anterior is None:
         print("No hay estados anteriores para deshacer.")
         return False
-    
+
     ticket.estado_actual = estado_anterior
     return True
 
@@ -47,18 +50,16 @@ if __name__ == "__main__":
     # Ticket personalizado del equipo
     ticket_1 = Ticket("TCK-001", "Error en inicio de sesión de usuario")
 
-    print(f"--- ESTADO INICIAL ---")
-    print(f"Ticket {ticket_1.id_ticket}: {ticket_1.estado_actual}\n")
+    print("--- ESTADO INICIAL ---")
+    print(ticket_1, "\n")
 
     print(f"--- REGISTRANDO 3 CAMBIOS DE ESTADO ---")
     ticket_1.cambiar_estado("En progreso")
-    print(f"Cambio 1 -> Estado actual: {ticket_1.estado_actual}")
-
+    print(f"Cambio 1 -> {ticket_1}")
     ticket_1.cambiar_estado("En revisión")
-    print(f"Cambio 2 -> Estado actual: {ticket_1.estado_actual}")
-
+    print(f"Cambio 2 -> {ticket_1}")
     ticket_1.cambiar_estado("Resuelto")
-    print(f"Cambio 3 -> Estado actual: {ticket_1.estado_actual}\n")
+    print(f"Cambio 3 -> {ticket_1}\n")
 
     print(f"--- APLICANDO DESHACER (UNDO) ---")
     deshacer_ultimo_cambio(ticket_1)
