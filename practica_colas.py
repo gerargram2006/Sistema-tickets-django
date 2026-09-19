@@ -1,19 +1,4 @@
-class Pila:
-    """Clase Pila propia sin librerías externas (Política LIFO)."""
-    def __init__(self):
-        self._elementos = []
-
-    def is_empty(self):
-        return len(self._elementos) == 0
-
-    def push(self, dato):
-        self._elementos.append(dato)
-
-    def pop(self):
-        if self.is_empty():
-            return None
-        return self._elementos.pop()
-
+from tickets.estructura import Pila
 
 class Ticket:
     """Representa un ticket del sistema con historial de estados."""
