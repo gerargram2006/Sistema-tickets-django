@@ -4,10 +4,8 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
-# Los imports de la app van después de django.setup()
 from tickets.cola import crear_ticket, asignar_siguiente_ticket, deshacer_ultimo_cambio
 from tickets.models import Usuario
-
 
 if __name__ == "__main__":
     datos = [
@@ -20,7 +18,6 @@ if __name__ == "__main__":
         ("Lentitud en el panel de tickets",
          "La lista tarda más de 10 segundos en cargar con muchos registros"),
     ]
-
     print("--- CREANDO 4 TICKETS (ENQUEUE) ---")
     for titulo, descripcion in datos:
         ticket = crear_ticket(titulo, descripcion)
