@@ -1,2 +1,19 @@
-{% for m in messages %}<p>{{ m }}</p>{% endfor %}
-<ul>{% for t in tickets %}<li>{{ t }}</li>{% endfor %}</ul>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cola de Atención de Tickets</title>
+</head>
+<body>
+    <h1>Turnos de Atención (Pendientes)</h1>
+    <ol>
+        {% for ticket in tickets %}
+            <li>
+                <strong>{{ ticket.titulo }}</strong> - Asignado a: {{ ticket.agente_asignado }}
+                <a href="{% url 'detalle_ticket' ticket.id %}">Ver detalle</a>
+            </li>
+        {% empty %}
+            <li>No hay tickets pendientes en la cola.</li>
+        {% endfor %}
+    </ol>
+</body>
+</html>
