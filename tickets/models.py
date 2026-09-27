@@ -12,7 +12,7 @@ class Usuario(models.Model):
 class Ticket(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
-    estado = models.CharField(max_length=20, default="Abierto")
+    estado = models.CharField(max_length=20, default="Pendiente")
     agente_asignado = models.ForeignKey(
         Usuario, null=True, blank=True, on_delete=models.SET_NULL
     )

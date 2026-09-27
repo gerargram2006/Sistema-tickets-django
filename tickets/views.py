@@ -24,9 +24,9 @@ def buscar_articulo(titulo_buscado):
     return None, comparaciones
 
 def lista_tickets(request):
-    estado_filtro = request.GET.get('estado', 'Abierto')
+    estado_filtro = request.GET.get('estado', 'Pendiente')
     
-    # 1. Obtener tickets según el estado seleccionado (por defecto 'Abierto')
+    # 1. Obtener tickets según el estado seleccionado (por defecto 'Pendiente')
     tickets_filtrados = Ticket.objects.filter(estado__iexact=estado_filtro)
     
     # 2. Inicializar la cola circular con la capacidad necesaria
