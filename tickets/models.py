@@ -19,3 +19,11 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"[{self.pk}] {self.titulo} - {self.estado}"
+
+
+class Articulo(models.Model):
+    titulo = models.CharField(max_length=150, unique=True)
+    contenido = models.TextField()
+
+    def __str__(self):
+        return self.titulo
