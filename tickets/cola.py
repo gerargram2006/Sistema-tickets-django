@@ -39,3 +39,31 @@ def asignar_siguiente_ticket(agente):
     ticket.agente_asignado = agente
     cambiar_estado(ticket, "En progreso")
     return ticket
+
+
+class ColaCircular:
+    def __init__(self, capacidad):
+        self.capacidad = capacidad
+        self.cola = [None] * capacidad
+        self.frente = -1
+        self.final = -1
+
+    def encolar(self, elemento):
+        if (self.final + 1) % self.capacidad == self.frente:
+            return False  # Cola llena
+        if self.frente == -1:
+            self.frente = 0
+        self.final = (self.final + 1) % self.capacidad
+        self.cola[self.final] = elemento
+        return True
+
+    def desencolar(self):
+        if self.frente == -1:
+            return None  # Cola vacía
+        elemento = self.cola[self.frente]
+        if self.frente == self.final:
+            self.frente = -1
+            self.final = -1
+        else:
+            self.frente = (self.frente + 1) % self.capacidad
+        return elemento
