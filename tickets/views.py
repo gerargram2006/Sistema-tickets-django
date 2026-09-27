@@ -1,16 +1,49 @@
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import Ticket
-from .cola import crear_ticket
+from django.shortcuts import render, get_object_or_404
+from .models import Ticket, Articulo
+from .cola import ColaCircular
 
+def buscar_articulo(titulo_buscado):
+    # Se obtienen todos los artículos y se ordenan alfabéticamente
+    articulos = list(Articulo.objects.all().order_by('titulo'))
+    inicio = 0
+    fin = len(articulos) - 1
+    comparaciones = 0
 
-def demo_fifo(request):
-    crear_ticket("Ticket de prueba 1", "Primero")
-    messages.success(request, "Ticket 1 creado")
-    crear_ticket("Ticket de prueba 2", "Segundo")
-    messages.success(request, "Ticket 2 creado")
-    return redirect("lista_tickets")
+    while inicio <= fin:
+        comparaciones += 1
+        medio = (inicio + fin) // 2
+        titulo_medio = articulos[medio].titulo
 
+        if titulo_medio == titulo_buscado:
+            return articulos[medio], comparaciones
+        elif titulo_medio < titulo_buscado:
+            inicio = medio + 1
+        else:
+            fin = medio - 1
+            
+    return None, comparaciones
 
 def lista_tickets(request):
-    return render(request, "tickets/lista.html", {"tickets": Ticket.objects.all()})
+    # 1. Obtener tickets pendientes
+    tickets_pendientes = Ticket.objects.filter(estado='pendiente')
+    
+    # 2. Inicializar la cola circular con la capacidad necesaria
+    capacidad = len(tickets_pendientes) if len(tickets_pendientes) > 0 else 1
+    cola = ColaCircular(capacidad)
+    
+    # 3. Encolar
+    for ticket in tickets_pendientes:
+        cola.encolar(ticket)
+        
+    # 4. Desencolar para determinar el orden estricto de atención
+    tickets_ordenados = []
+    ticket_actual = cola.desencolar()
+    while ticket_actual is not None:
+        tickets_ordenados.append(ticket_actual)
+        ticket_actual = cola.desencolar()
+
+    return render(request, 'tickets/lista.html', {'tickets': tickets_ordenados})
+
+def detalle_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    return render(request, 'tickets/detalle.html', {'ticket': ticket})
