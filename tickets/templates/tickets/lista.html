@@ -4,15 +4,24 @@
     <title>Cola de Atención de Tickets</title>
 </head>
 <body>
-    <h1>Turnos de Atención (Pendientes)</h1>
+    <h1>Turnos de Atención ({{ estado_actual|title }})</h1>
+    
+    <div style="margin-bottom: 20px;">
+        <strong>Filtrar por estado:</strong>
+        <a href="?estado=Abierto" style="padding: 5px 10px; margin-right: 5px; text-decoration: none; background-color: #eee; border: 1px solid #ccc; border-radius: 4px;">Pendiente (Abierto)</a>
+        <a href="?estado=En progreso" style="padding: 5px 10px; margin-right: 5px; text-decoration: none; background-color: #eee; border: 1px solid #ccc; border-radius: 4px;">En Progreso</a>
+        <a href="?estado=Completado" style="padding: 5px 10px; text-decoration: none; background-color: #eee; border: 1px solid #ccc; border-radius: 4px;">Completado</a>
+    </div>
+
     <ol>
         {% for ticket in tickets %}
-            <li>
-                <strong>{{ ticket.titulo }}</strong> - Asignado a: {{ ticket.agente_asignado }}
+            <li style="margin-bottom: 10px;">
+                <strong>{{ ticket.titulo }}</strong> - Asignado a: {{ ticket.agente_asignado|default:"Nadie" }}
+                <br>
                 <a href="{% url 'detalle_ticket' ticket.id %}">Ver detalle</a>
             </li>
         {% empty %}
-            <li>No hay tickets pendientes en la cola.</li>
+            <li>No hay tickets en estado "{{ estado_actual }}" en la cola.</li>
         {% endfor %}
     </ol>
 </body>

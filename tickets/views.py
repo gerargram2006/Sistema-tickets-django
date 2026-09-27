@@ -24,15 +24,17 @@ def buscar_articulo(titulo_buscado):
     return None, comparaciones
 
 def lista_tickets(request):
-    # 1. Obtener tickets pendientes
-    tickets_pendientes = Ticket.objects.filter(estado='pendiente')
+    estado_filtro = request.GET.get('estado', 'Abierto')
+    
+    # 1. Obtener tickets según el estado seleccionado (por defecto 'Abierto')
+    tickets_filtrados = Ticket.objects.filter(estado__iexact=estado_filtro)
     
     # 2. Inicializar la cola circular con la capacidad necesaria
-    capacidad = len(tickets_pendientes) if len(tickets_pendientes) > 0 else 1
+    capacidad = len(tickets_filtrados) if len(tickets_filtrados) > 0 else 1
     cola = ColaCircular(capacidad)
     
     # 3. Encolar
-    for ticket in tickets_pendientes:
+    for ticket in tickets_filtrados:
         cola.encolar(ticket)
         
     # 4. Desencolar para determinar el orden estricto de atención
@@ -42,7 +44,10 @@ def lista_tickets(request):
         tickets_ordenados.append(ticket_actual)
         ticket_actual = cola.desencolar()
 
-    return render(request, 'tickets/lista.html', {'tickets': tickets_ordenados})
+    return render(request, 'tickets/lista.html', {
+        'tickets': tickets_ordenados,
+        'estado_actual': estado_filtro
+    })
 
 def detalle_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
