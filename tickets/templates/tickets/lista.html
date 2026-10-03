@@ -9,6 +9,7 @@
 <div class="container py-5" style="max-width: 700px;">
 
     <h1 class="mb-4">Turnos de Atención <span class="text-muted fs-4">({{ estado_actual|title }})</span></h1>
+    <a href="{% url 'crear_ticket_form' %}" class="btn btn-success mb-3">+ Nuevo ticket</a>
 
     <div class="mb-4" style="max-width: 250px;">
         <label for="filtro-estado" class="form-label text-secondary">Filtrar por estado:</label>

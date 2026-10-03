@@ -8,6 +8,11 @@ class Usuario(models.Model):
     def __str__(self):
         return self.nombre
 
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
 
 class Ticket(models.Model):
     titulo = models.CharField(max_length=200)
@@ -16,10 +21,12 @@ class Ticket(models.Model):
     agente_asignado = models.ForeignKey(
         Usuario, null=True, blank=True, on_delete=models.SET_NULL
     )
+    categoria = models.ForeignKey(
+        Categoria, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return f"[{self.pk}] {self.titulo} - {self.estado}"
-
 
 class Articulo(models.Model):
     titulo = models.CharField(max_length=150, unique=True)
@@ -27,3 +34,4 @@ class Articulo(models.Model):
 
     def __str__(self):
         return self.titulo
+

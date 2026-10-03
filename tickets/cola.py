@@ -67,3 +67,5 @@ class ColaCircular:
         else:
             self.frente = (self.frente + 1) % self.capacidad
         return elemento
+
+

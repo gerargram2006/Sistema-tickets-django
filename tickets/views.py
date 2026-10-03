@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ticket, Articulo
 from .cola import ColaCircular
+from .forms import TicketForm
 
 def buscar_articulo(titulo_buscado):
     # Se obtienen todos los artículos y se ordenan alfabéticamente
@@ -20,23 +21,23 @@ def buscar_articulo(titulo_buscado):
             inicio = medio + 1
         else:
             fin = medio - 1
-            
+
     return None, comparaciones
 
 def lista_tickets(request):
     estado_filtro = request.GET.get('estado', 'Pendiente')
-    
+
     # 1. Obtener tickets según el estado seleccionado (por defecto 'Pendiente')
     tickets_filtrados = Ticket.objects.filter(estado__iexact=estado_filtro)
-    
+
     # 2. Inicializar la cola circular con la capacidad necesaria
     capacidad = len(tickets_filtrados) if len(tickets_filtrados) > 0 else 1
     cola = ColaCircular(capacidad)
-    
+
     # 3. Encolar
     for ticket in tickets_filtrados:
         cola.encolar(ticket)
-        
+
     # 4. Desencolar para determinar el orden estricto de atención
     tickets_ordenados = []
     ticket_actual = cola.desencolar()
@@ -52,3 +53,25 @@ def lista_tickets(request):
 def detalle_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     return render(request, 'tickets/detalle.html', {'ticket': ticket})
+
+def crear_ticket_form(request):
+    if request.method == "POST":
+        form = TicketForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("lista_tickets")
+    else:
+        form = TicketForm()
+    return render(request, "tickets/form_ticket.html", {"form": form, "titulo_pagina": "Nuevo ticket"})
+
+
+def editar_ticket_form(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.method == "POST":
+        form = TicketForm(request.POST, instance=ticket)
+        if form.is_valid():
+            form.save()
+            return redirect("detalle_ticket", ticket_id=ticket.id)
+    else:
+        form = TicketForm(instance=ticket)
+    return render(request, "tickets/form_ticket.html", {"form": form, "titulo_pagina": "Editar ticket"})
