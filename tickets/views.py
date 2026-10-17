@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ticket, Articulo
 from .cola import ColaCircular
 from .forms import TicketForm
+from .historial import HistorialComentarios
 
 def buscar_articulo(titulo_buscado):
     # Se obtienen todos los artículos y se ordenan alfabéticamente
@@ -52,7 +53,20 @@ def lista_tickets(request):
 
 def detalle_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    return render(request, 'tickets/detalle.html', {'ticket': ticket})
+    comentarios = ticket.comentarios.order_by("fecha")
+
+    historial = HistorialComentarios(comentarios)
+    pos = int(request.GET.get("pos", 0))
+    for _ in range(pos):
+        historial.siguiente()
+
+    return render(request, "tickets/detalle.html", {
+        "ticket": ticket,
+        "comentario_actual": historial.actual(),
+        "hay_anterior": historial.hay_anterior(),
+        "hay_siguiente": historial.hay_siguiente(),
+        "pos": pos,
+    })
 
 def crear_ticket_form(request):
     if request.method == "POST":

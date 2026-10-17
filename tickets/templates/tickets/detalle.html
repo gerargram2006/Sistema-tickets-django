@@ -16,6 +16,25 @@
             <p class="card-text"><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
         </div>
     </div>
+    <div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Historial de comentarios</h5>
+        {% if comentario_actual %}
+            <p class="mb-1"><strong>{{ comentario_actual.autor }}</strong> — {{ comentario_actual.fecha }}</p>
+            <p>{{ comentario_actual.texto }}</p>
+            <div class="d-flex gap-2">
+                {% if hay_anterior %}
+                    <a href="?pos={{ pos|add:"-1" }}" class="btn btn-sm btn-outline-secondary">&larr; Anterior</a>
+                {% endif %}
+                {% if hay_siguiente %}
+                    <a href="?pos={{ pos|add:"1" }}" class="btn btn-sm btn-outline-secondary">Siguiente &rarr;</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-muted">Este ticket no tiene comentarios todavía.</p>
+        {% endif %}
+    </div>
+</div>
 
     <a href="{% url 'lista_tickets' %}" class="btn btn-outline-secondary mt-4">&larr; Volver a la cola</a>
     <a href="{% url 'editar_ticket_form' ticket.id %}" class="btn btn-outline-primary mt-4">Editar</a>

@@ -35,3 +35,13 @@ class Articulo(models.Model):
     def __str__(self):
         return self.titulo
 
+class Comentario(models.Model):
+    ticket = models.ForeignKey(
+        Ticket, on_delete=models.CASCADE, related_name="comentarios"
+    )
+    texto = models.TextField()
+    autor = models.CharField(max_length=100)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comentario de {self.autor} en [{self.ticket_id}]"
