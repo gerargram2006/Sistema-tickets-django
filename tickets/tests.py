@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,6 +7,8 @@ from .models import Categoria, Ticket, Usuario
 
 class TicketAgentAssignmentTests(TestCase):
     def setUp(self):
+        self.usuario_web = User.objects.create_user(username="cliente", password="test1234")
+        self.client.force_login(self.usuario_web)
         self.categoria = Categoria.objects.create(nombre="Software")
         self.agente = Usuario.objects.create(
             nombre="Ana Agente",
@@ -42,6 +45,7 @@ class TicketAgentAssignmentTests(TestCase):
             descripcion="La impresora no responde",
             categoria=self.categoria,
             agente_asignado=self.agente,
+            propietario=self.usuario_web,
         )
 
         response = self.client.post(

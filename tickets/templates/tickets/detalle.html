@@ -11,8 +11,14 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title h3">{{ ticket.titulo }}</h1>
-            <p class="card-text"><strong>Estado:</strong> {{ ticket.estado }}</p>
+            <p class="card-text"><strong>Estado:</strong> {{ ticket.get_estado_display }}</p>
             <p class="card-text"><strong>Agente:</strong> {{ ticket.agente_asignado|default:"Nadie" }}</p>
+            <p class="card-text"><strong>Impacto:</strong> {{ ticket.impacto }}</p>
+            <p class="card-text"><strong>Categoría / peso:</strong> {{ ticket.categoria|default:"Sin categoría" }} / {% if ticket.categoria %}{{ ticket.categoria.peso }}{% else %}1{% endif %}</p>
+            <p class="card-text"><strong>Días abierto:</strong> {{ ticket.dias_abierto }}</p>
+            <p class="card-text"><strong>Prioridad:</strong> {{ ticket.prioridad }}</p>
+            <p class="card-text"><strong>Fórmula postfija:</strong> {{ ticket.formula_postfija }}</p>
+            {% if ticket.es_urgente %}<p><span class="badge bg-danger">URGENTE</span></p>{% endif %}
             <p class="card-text"><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
         </div>
     </div>

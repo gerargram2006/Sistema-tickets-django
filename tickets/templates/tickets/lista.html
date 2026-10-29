@@ -8,31 +8,37 @@
 <body class="bg-light">
 <div class="container py-5" style="max-width: 700px;">
 
-    <h1 class="mb-4">Turnos de Atención <span class="text-muted fs-4">({{ estado_actual|title }})</span></h1>
-    <a href="{% url 'crear_ticket_form' %}" class="btn btn-success mb-3">+ Nuevo ticket</a>
+    <h1 class="mb-4">
+        {% if modo == 'urgentes' %}Tickets urgentes{% else %}Mis tickets{% endif %}
+    </h1>
+    <div class="d-flex gap-2 mb-3">
+        <a href="{% url 'crear_ticket_form' %}" class="btn btn-success">+ Nuevo ticket</a>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-outline-danger" type="submit">Cerrar sesión</button></form>
+    </div>
 
-    <div class="mb-4" style="max-width: 250px;">
+    {% if modo == 'cliente' %}<div class="mb-4" style="max-width: 250px;">
         <label for="filtro-estado" class="form-label text-secondary">Filtrar por estado:</label>
         <select id="filtro-estado" class="form-select" onchange="location.href='?estado=' + this.value">
-            <option value="Pendiente" {% if estado_actual == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-            <option value="En progreso" {% if estado_actual == 'En progreso' %}selected{% endif %}>En Progreso</option>
-            <option value="Completado" {% if estado_actual == 'Completado' %}selected{% endif %}>Completado</option>
+            <option value="abierto" {% if estado_actual == 'abierto' %}selected{% endif %}>Abierto</option>
+            <option value="en_progreso" {% if estado_actual == 'en_progreso' %}selected{% endif %}>En progreso</option>
+            <option value="completado" {% if estado_actual == 'completado' %}selected{% endif %}>Completado</option>
         </select>
-    </div>
+    </div>{% endif %}
 
     <ol class="list-group list-group-numbered">
         {% for ticket in tickets %}
             <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">{{ ticket.titulo }}</div>
-                    Asignado a: {{ ticket.agente_asignado|default:"Nadie" }}
-                    <br>
+                    Prioridad: <strong>{{ ticket.prioridad }}</strong><br>
+                    Asignado a: {{ ticket.agente_asignado|default:"Nadie" }}<br>
+                    Postfijo: {{ ticket.formula_postfija }}<br>
                     <a href="{% url 'detalle_ticket' ticket.id %}">Ver detalle</a>
                 </div>
             </li>
         {% empty %}
             <li class="list-group-item">
-                No hay tickets en estado "{{ estado_actual }}" en la cola.
+                No hay tickets urgentes o tickets en estado "{{ estado_actual }}".
             </li>
         {% endfor %}
     </ol>
