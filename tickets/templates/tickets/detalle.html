@@ -15,10 +15,9 @@
             <p class="card-text"><strong>Agente:</strong> {{ ticket.agente_asignado|default:"Nadie" }}</p>
             <p class="card-text"><strong>Impacto:</strong> {{ ticket.impacto }}</p>
             <p class="card-text"><strong>Categoría / peso:</strong> {{ ticket.categoria|default:"Sin categoría" }} / {% if ticket.categoria %}{{ ticket.categoria.peso }}{% else %}1{% endif %}</p>
-            <p class="card-text"><strong>Días abierto:</strong> {{ ticket.dias_abierto }}</p>
+            <p class="card-text"><strong>Creado por:</strong> {{ ticket.creado_por|default:"Sin asignar" }}</p>
+            <p class="card-text"><strong>Creado:</strong> {{ ticket.creado }}</p>
             <p class="card-text"><strong>Prioridad:</strong> {{ ticket.prioridad }}</p>
-            <p class="card-text"><strong>Fórmula postfija:</strong> {{ ticket.formula_postfija }}</p>
-            {% if ticket.es_urgente %}<p><span class="badge bg-danger">URGENTE</span></p>{% endif %}
             <p class="card-text"><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
         </div>
     </div>

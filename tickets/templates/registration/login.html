@@ -7,19 +7,12 @@
 </head>
 <body class="bg-light">
 <div class="container py-5" style="max-width: 420px;">
-    <h1 class="h3 mb-4">Sistema de Tickets</h1>
+    <h1 class="h3 mb-4">Iniciar sesión</h1>
     {% if form.errors %}<div class="alert alert-danger">Usuario o contraseña incorrectos.</div>{% endif %}
     <form method="post">
         {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label" for="id_username">Usuario</label>
-            {{ form.username }}
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="id_password">Contraseña</label>
-            {{ form.password }}
-        </div>
-        <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Entrar</button>
     </form>
 </div>
 </body>

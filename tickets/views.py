@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Ticket, Articulo
-from .cola import ColaCircular
 from .forms import TicketForm
 from .historial import HistorialComentarios
 
@@ -29,39 +28,33 @@ def buscar_articulo(titulo_buscado):
 
 @login_required
 def lista_tickets(request):
-    if request.user.is_staff:
-        filtro = Q(estado="abierto") & (Q(impacto__gte=4))
-        tickets = Ticket.objects.filter(filtro)
-        tickets_ordenados = sorted(tickets, key=lambda ticket: ticket.prioridad(), reverse=True)
-        modo = "urgentes"
+    es_agente = request.user.groups.filter(name="Agente").exists() or request.user.is_superuser
+
+    if es_agente:
+        # El filtro Q es un árbol de expresión: AND es la raíz; Q(estado) es
+        # la hoja izquierda y el OR de impacto/peso es el hijo derecho.
+        filtro = Q(estado="abierto") & (Q(impacto__gte=4) | Q(categoria__peso__gte=3))
+        tickets = list(Ticket.objects.filter(filtro))
+        tickets.sort(key=lambda t: t.prioridad(), reverse=True)
     else:
-        estado_filtro = request.GET.get("estado", "abierto")
-        tickets = Ticket.objects.filter(propietario=request.user)
+        tickets = Ticket.objects.filter(creado_por=request.user)
+        estado_filtro = request.GET.get("estado")
         if estado_filtro in dict(Ticket.ESTADOS):
             tickets = tickets.filter(estado=estado_filtro)
-        capacidad = len(tickets) if tickets else 1
-        cola = ColaCircular(capacidad)
-        for ticket in tickets:
-            cola.encolar(ticket)
-        tickets_ordenados = []
-        ticket_actual = cola.desencolar()
-        while ticket_actual is not None:
-            tickets_ordenados.append(ticket_actual)
-            ticket_actual = cola.desencolar()
-        modo = "cliente"
 
-    return render(request, 'tickets/lista.html', {
-        'tickets': tickets_ordenados,
-        'estado_actual': request.GET.get("estado", "abierto"),
-        'modo': modo,
+    return render(request, "tickets/lista.html", {
+        "tickets": tickets,
+        "es_agente": es_agente,
+        "estado_actual": request.GET.get("estado", "abierto"),
     })
 
 @login_required
 def detalle_ticket(request, ticket_id):
-    if request.user.is_staff:
+    es_agente = request.user.groups.filter(name="Agente").exists() or request.user.is_superuser
+    if es_agente:
         ticket = get_object_or_404(Ticket, id=ticket_id)
     else:
-        ticket = get_object_or_404(Ticket, id=ticket_id, propietario=request.user)
+        ticket = get_object_or_404(Ticket, id=ticket_id, creado_por=request.user)
     comentarios = ticket.comentarios.order_by("fecha")
 
     historial = HistorialComentarios(comentarios)
@@ -83,7 +76,7 @@ def crear_ticket_form(request):
         form = TicketForm(request.POST)
         if form.is_valid():
             ticket = form.save(commit=False)
-            ticket.propietario = request.user
+            ticket.creado_por = request.user
             ticket.save()
             return redirect("lista_tickets")
     else:
@@ -93,10 +86,11 @@ def crear_ticket_form(request):
 
 @login_required
 def editar_ticket_form(request, ticket_id):
-    if request.user.is_staff:
+    es_agente = request.user.groups.filter(name="Agente").exists() or request.user.is_superuser
+    if es_agente:
         ticket = get_object_or_404(Ticket, id=ticket_id)
     else:
-        ticket = get_object_or_404(Ticket, id=ticket_id, propietario=request.user)
+        ticket = get_object_or_404(Ticket, id=ticket_id, creado_por=request.user)
     if request.method == "POST":
         form = TicketForm(request.POST, instance=ticket)
         if form.is_valid():

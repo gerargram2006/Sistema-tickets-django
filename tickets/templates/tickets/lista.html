@@ -8,15 +8,16 @@
 <body class="bg-light">
 <div class="container py-5" style="max-width: 700px;">
 
+    <p>Hola, {{ user.username }}</p>
     <h1 class="mb-4">
-        {% if modo == 'urgentes' %}Tickets urgentes{% else %}Mis tickets{% endif %}
+        {% if es_agente %}Tickets urgentes{% else %}Mis tickets{% endif %}
     </h1>
     <div class="d-flex gap-2 mb-3">
         <a href="{% url 'crear_ticket_form' %}" class="btn btn-success">+ Nuevo ticket</a>
         <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-outline-danger" type="submit">Cerrar sesión</button></form>
     </div>
 
-    {% if modo == 'cliente' %}<div class="mb-4" style="max-width: 250px;">
+    {% if not es_agente %}<div class="mb-4" style="max-width: 250px;">
         <label for="filtro-estado" class="form-label text-secondary">Filtrar por estado:</label>
         <select id="filtro-estado" class="form-select" onchange="location.href='?estado=' + this.value">
             <option value="abierto" {% if estado_actual == 'abierto' %}selected{% endif %}>Abierto</option>
@@ -32,13 +33,12 @@
                     <div class="fw-bold">{{ ticket.titulo }}</div>
                     Prioridad: <strong>{{ ticket.prioridad }}</strong><br>
                     Asignado a: {{ ticket.agente_asignado|default:"Nadie" }}<br>
-                    Postfijo: {{ ticket.formula_postfija }}<br>
                     <a href="{% url 'detalle_ticket' ticket.id %}">Ver detalle</a>
                 </div>
             </li>
         {% empty %}
             <li class="list-group-item">
-                No hay tickets urgentes o tickets en estado "{{ estado_actual }}".
+                No hay tickets.
             </li>
         {% endfor %}
     </ol>

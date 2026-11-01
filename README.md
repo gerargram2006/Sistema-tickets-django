@@ -1,30 +1,68 @@
-# Sistema-tickets-django
+# Sistema de Gestión de Tickets de Soporte
 
-Proyecto de portafolio de Estructuras de Datos y Algoritmos (Tecsup), desarrollado con Django.
+Proyecto del portafolio de Estructuras de Datos y Algoritmos (Tecsup), desarrollado con Django.
 
-## Iniciar en Windows (PowerShell)
+## Integrantes
 
-Ejecuta estos comandos desde la carpeta del proyecto:
+- Hugo Flores Merma
+- Gerar Camma
+- Samuel Llallacachi Salhua
 
-```powershell
-py -m venv venv
-.\venv\Scripts\python.exe -m pip install -r requirements.txt
-.\venv\Scripts\python.exe manage.py migrate
-.\venv\Scripts\python.exe manage.py check
-.\venv\Scripts\python.exe manage.py runserver
+## Cómo ejecutar
+
+```bash
+python -m venv venv
+venv/bin/python -m pip install -r requirements.txt
+venv/bin/python manage.py makemigrations
+venv/bin/python manage.py migrate
+venv/bin/python manage.py runserver
 ```
 
-Abre http://127.0.0.1:8000/ en el navegador. Para detener el servidor, presiona `Ctrl+C`.
+En Windows, activa el entorno y usa `venv\Scripts\python.exe` en lugar de `venv/bin/python`.
 
-Si el entorno `venv` ya existe y las dependencias estan instaladas, normalmente solo necesitas ejecutar:
+Abre http://127.0.0.1:8000/ para iniciar sesión. Panel administrativo: http://127.0.0.1:8000/admin/.
 
-```powershell
-.\venv\Scripts\python.exe manage.py migrate
-.\venv\Scripts\python.exe manage.py runserver
-```
+## Usuarios y roles de prueba
 
-Ejecuta `migrate` despues de descargar cambios que incluyan nuevas migraciones. Esto actualiza la base SQLite (`db.sqlite3`) para que coincida con los modelos de Django.
+Crea los usuarios desde `/admin/` y agrégalos a los grupos `Cliente` o `Agente`. Se recomienda al menos un usuario por grupo. También asigna `peso=3` a la categoría crítica `Hardware`.
 
-## Asignar un agente a un ticket
+## Preguntas Semana 10
 
-En el formulario de crear o editar un ticket, selecciona el agente encargado. La lista muestra los agentes registrados en **Usuarios** del panel `/admin/`. Si el ticket aun no tiene responsable, puedes dejar la opcion **Sin asignar**.
+### a) ¿Qué son hojas y qué son nodos internos en la expresión de permisos?
+
+Hojas: `Q(estado="abierto")`, `Q(impacto__gte=4)` y `Q(categoria__peso__gte=3)`. Nodos internos: `AND` (raíz) y `OR` (hijo derecho de la raíz).
+
+### b) ¿Por qué la postfija facilita el cálculo y evita depender de precedencia o paréntesis?
+
+La postfija no necesita paréntesis ni precedencia, el árbol se construye con una sola pasada usando una pila, y la fórmula es texto fácil de cambiar sin tocar el código.
+
+## Cómo ejecutar el proyecto
+
+1. Crear el entorno virtual:
+   python -m venv venv
+
+2. Activarlo:
+   - Linux / Mac: source venv/bin/activate
+   - Windows: venv\Scripts\activate
+
+3. Instalar Django:
+   pip install django
+
+4. Crear la base de datos:
+   python manage.py migrate
+
+5. Crear los usuarios de prueba:
+   python manage.py crear_usuarios
+
+6. Iniciar el servidor:
+   python manage.py runserver
+
+7. Abrir en el navegador: http://127.0.0.1:8000/
+
+## Usuarios de prueba
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Cliente | cliente_prueba | Cliente123! |
+| Agente | agente_prueba | Agente123! |
+| Administrador | admin | Admin123! |
