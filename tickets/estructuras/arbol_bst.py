@@ -56,3 +56,45 @@ def construir_indice(tickets, mezclar=True):
     for codigo, nombre in parejas:
         raiz = insertar(raiz, codigo, nombre)
     return raiz
+
+
+def a_lista(raiz, salida):
+    """Recorre el BST en inorden y agrega parejas (codigo, nombre) a salida."""
+    if raiz is None:
+        return
+    a_lista(raiz.izq, salida)
+    salida.append((raiz.codigo, raiz.nombre))
+    a_lista(raiz.der, salida)
+
+
+def construir_balanceado(datos):
+    """Construye un BST balanceado a partir de una lista ordenada de parejas (codigo, nombre)."""
+    if not datos:
+        return None
+    medio = len(datos) // 2
+    codigo, nombre = datos[medio]
+    raiz = NodoBST(codigo, nombre)
+    raiz.izq = construir_balanceado(datos[:medio])
+    raiz.der = construir_balanceado(datos[medio + 1:])
+    return raiz
+
+
+def construir_indice_balanceado(tickets):
+    """Construye un índice BST balanceado a partir de los tickets (id, titulo)."""
+    parejas = sorted((t.id, t.titulo) for t in tickets)
+    return construir_balanceado(parejas)
+
+
+def contar_pasos(raiz, codigo):
+    """Busca un código en el BST sin imprimir y devuelve cuántos nodos revisó."""
+    pasos = 0
+    actual = raiz
+    while actual is not None:
+        pasos += 1
+        if codigo == actual.codigo:
+            return pasos
+        elif codigo < actual.codigo:
+            actual = actual.izq
+        else:
+            actual = actual.der
+    return pasos
