@@ -45,7 +45,7 @@ Orden cuando toca modelos: `makemigrations` → `migrate` → `runserver`.
 - Todas las vistas de `tickets/views.py` llevan `@login_required`. Sin sesión, redirige a `login` (vía `django.contrib.auth.urls` bajo `cuentas/`).
 - Templates viven en `tickets/templates/tickets/`. `lista.html` hace `{% extends "tickets/base.html" %}`, por lo que `base.html` **debe estar dentro de `tickets/templates/tickets/`** (no un nivel arriba). Si se mueve, `TemplateDoesNotExist`.
 - Sintaxis de plantillas Django: dentro de `{% if %}` el operador `==` **necesita espacios alrededor** (`{% if x == "y" %}`). Sin espacios Django falla al parsear (`Could not parse the remainder`).
-- Roles: grupos `Cliente` y `Agente`. Los superusuarios cuentan como agente. Los agentes ven tickets con filtro `Q(estado="abierto") & (Q(impacto__gte=4) \| Q(categoria__peso__gte=3))` ordenados por `prioridad()`.
+- Roles: grupos `Cliente` y `Agente`. Los superusuarios cuentan como agente. Los agentes ven **todos los tickets** ordenados por fecha de creación (más recientes primero). Los clientes ven solo sus propios tickets con filtro opcional por estado.
 - `Ticket.prioridad()` evalúa la fórmula postfija `"impacto peso * dias +"` desde `tickets/estructuras/arbol_expresion.py` (`construir_postfija` / `evaluar_con_variables`). No tocar sin entender la notación postfija.
 - Los usuarios de prueba (`cliente_prueba`, `agente_prueba`, `admin`) **no se crean con un comando `crear_usuarios`** (ese comando no existe en el repo). Círlos desde `/admin/` y agréguelos a los grupos `Cliente` o `Agente`.
 

@@ -33,13 +33,9 @@ def lista_tickets(request):
     es_agente = request.user.groups.filter(name="Agente").exists() or request.user.is_superuser
 
     if es_agente:
-        # El filtro Q es un árbol de expresión: AND es la raíz; Q(estado) es
-        # la hoja izquierda y el OR de impacto/peso es el hijo derecho.
-        filtro = Q(estado="abierto") & (Q(impacto__gte=4) | Q(categoria__peso__gte=3))
-        tickets = list(Ticket.objects.filter(filtro))
-        tickets.sort(key=lambda t: t.prioridad(), reverse=True)
+        tickets = Ticket.objects.all().order_by("-creado")
     else:
-        tickets = Ticket.objects.filter(creado_por=request.user)
+        tickets = Ticket.objects.filter(creado_por=request.user).order_by("-creado")
         estado_filtro = request.GET.get("estado")
         if estado_filtro in dict(Ticket.ESTADOS):
             tickets = tickets.filter(estado=estado_filtro)
