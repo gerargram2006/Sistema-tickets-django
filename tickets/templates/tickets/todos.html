@@ -1,17 +1,61 @@
-<h1>Todos los tickets</h1>
-<ul>
-{% for t in tickets %}
-  <li>#{{ t.id }} · {{ t.titulo }} · {{ t.get_impacto_display }}</li>
-{% empty %}
-  <li>No hay tickets.</li>
-{% endfor %}
-</ul>
-<p>
-{% if page_obj.has_previous %}
-  <a href="?page={{ page_obj.previous_page_number }}">« Anterior</a>
-{% endif %}
-Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-{% if page_obj.has_next %}
-  <a href="?page={{ page_obj.next_page_number }}">Siguiente »</a>
-{% endif %}
-</p>
+{% extends "tickets/base.html" %}
+
+{% block titulo %}Todos los tickets{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Todos los tickets</h2>
+        <p class="text-muted mb-0">Listado completo paginado de 5 en 5.</p>
+    </div>
+    <a href="{% url 'lista_tickets' %}" class="btn btn-outline-secondary btn-sm">Volver al inicio</a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <ul class="list-group list-group-flush">
+        {% for t in tickets %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div>
+                <span class="badge bg-secondary me-2">#{{ t.id }}</span>
+                <a href="{% url 'detalle_ticket' t.id %}" class="fw-semibold text-decoration-none text-dark">
+                    {{ t.titulo }}
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary">{{ t.get_impacto_display }}</span>
+                <span class="badge
+                    {% if t.estado == 'abierto' %}bg-warning text-dark
+                    {% elif t.estado == 'en_progreso' %}bg-info text-dark
+                    {% else %}bg-success{% endif %}">
+                    {{ t.get_estado_display }}
+                </span>
+            </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center text-muted py-4">No hay tickets.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<nav aria-label="Paginación de tickets" class="d-flex justify-content-between align-items-center">
+    <div>
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm">« Anterior</a>
+        {% else %}
+        <span class="btn btn-outline-secondary btn-sm disabled">« Anterior</span>
+        {% endif %}
+    </div>
+
+    <span class="text-muted fw-medium">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span>
+
+    <div>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm">Siguiente »</a>
+        {% else %}
+        <span class="btn btn-outline-secondary btn-sm disabled">Siguiente »</span>
+        {% endif %}
+    </div>
+</nav>
+{% endblock %}
