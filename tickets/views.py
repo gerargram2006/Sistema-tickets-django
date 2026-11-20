@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
 from .models import Ticket, Articulo
 from .forms import TicketForm
 from .historial import HistorialComentarios
@@ -99,3 +101,11 @@ def editar_ticket_form(request, ticket_id):
     else:
         form = TicketForm(instance=ticket)
     return render(request, "tickets/form_ticket.html", {"form": form, "titulo_pagina": "Editar ticket"})
+
+
+class TicketListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = "tickets/todos.html"
+    context_object_name = "tickets"
+    paginate_by = 5
+    ordering = ["-creado"]

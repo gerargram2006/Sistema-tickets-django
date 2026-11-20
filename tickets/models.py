@@ -94,3 +94,8 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.autor} en [{self.ticket_id}]"
+
+
+class CodigoPrueba(models.Model):
+    sin_indice = models.IntegerField()
+    con_indice = models.IntegerField(db_index=True)
