@@ -57,6 +57,11 @@ class Ticket(models.Model):
         Categoria, null=True, blank=True, on_delete=models.SET_NULL
     )
 
+    resuelto_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="tickets_resueltos"
+    )
+
     @property
     def propietario(self):
         return self.creado_por

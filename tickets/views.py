@@ -6,6 +6,8 @@ from django.views.generic import ListView
 from .models import Ticket, Articulo
 from .forms import TicketForm
 from .historial import HistorialComentarios
+from django.contrib.auth.models import User
+from .estructuras.ranking import ranking_agentes
 
 def buscar_articulo(titulo_buscado):
     # Se obtienen todos los artículos y se ordenan alfabéticamente
@@ -105,3 +107,8 @@ class TicketListView(LoginRequiredMixin, ListView):
     context_object_name = "tickets"
     paginate_by = 5
     ordering = ["-creado"]
+
+@login_required
+def tablero(request):
+    agentes = User.objects.filter(groups__name="Agente")
+    return render(request, "tickets/tablero.html", {"ranking": ranking_agentes(agentes)})

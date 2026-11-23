@@ -8,6 +8,7 @@ from .estructuras.arbol_bst import (
 
 from django.contrib.auth.models import User
 from tickets.estructuras.cola_prioridad import MinHeap, primeros
+from tickets.estructuras.ranking import heap_sort
 
 
 class ArbolBalanceadoTest(SimpleTestCase):
@@ -75,3 +76,12 @@ class UrgentesAPITest(TestCase):
         self.client.login(username="agente_test", password="clave12345")
         respuesta = self.client.get("/api/tickets/urgentes/?n=3")
         self.assertEqual(respuesta.status_code, 200)
+
+class RankingTest(TestCase):
+    def test_heap_sort_coincide_con_sorted(self):
+        datos = [(3, "ana"), (7, "beto"), (3, "luis"), (1, "carla"), (7, "zoe")]
+        self.assertEqual(heap_sort(datos), sorted(datos, reverse=True))
+
+    def test_tablero_pide_login(self):
+        respuesta = self.client.get("/tablero/")
+        self.assertEqual(respuesta.status_code, 302)
