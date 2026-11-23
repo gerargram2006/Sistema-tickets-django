@@ -6,6 +6,9 @@ from .estructuras.arbol_bst import (
     contar_pasos,
 )
 
+from django.contrib.auth.models import User
+from tickets.estructuras.cola_prioridad import MinHeap, primeros
+
 
 class ArbolBalanceadoTest(SimpleTestCase):
     def setUp(self):
@@ -38,3 +41,37 @@ class BusquedaTest(SimpleTestCase):
         raiz = construir_balanceado(datos)
         pasos = contar_pasos(raiz, 100)
         self.assertLessEqual(pasos, 7)
+
+
+class ColaUrgentesTest(TestCase):
+    def test_extrae_primero_el_mas_urgente(self):
+        cola = MinHeap()
+        cola.insertar((-3, 1, "normal"))
+        cola.insertar((-9, 2, "urgente"))
+        cola.insertar((-5, 3, "media"))
+        self.assertEqual(primeros(cola, 1)[0]["titulo"], "urgente")
+
+    def test_empate_sale_el_mas_antiguo(self):
+        cola = MinHeap()
+        cola.insertar((-5, 8, "nuevo"))
+        cola.insertar((-5, 2, "antiguo"))
+        self.assertEqual(primeros(cola, 1)[0]["id"], 2)
+
+    def test_orden_completo(self):
+        cola = MinHeap()
+        for i, p in enumerate([4, 9, 1, 7, 9, 2], start=1):
+            cola.insertar((-p, i, f"ticket {i}"))
+        prioridades = [t["prioridad"] for t in primeros(cola, 10)]
+        self.assertEqual(prioridades, sorted(prioridades, reverse=True))
+
+
+class UrgentesAPITest(TestCase):
+    def test_sin_sesion_da_403(self):
+        respuesta = self.client.get("/api/tickets/urgentes/")
+        self.assertEqual(respuesta.status_code, 403)
+
+    def test_con_sesion_da_200(self):
+        User.objects.create_user("agente_test", password="clave12345")
+        self.client.login(username="agente_test", password="clave12345")
+        respuesta = self.client.get("/api/tickets/urgentes/?n=3")
+        self.assertEqual(respuesta.status_code, 200)
