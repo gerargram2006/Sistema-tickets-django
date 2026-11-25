@@ -1,4 +1,6 @@
 from django.test import SimpleTestCase, TestCase
+from .models import Area
+from .estructuras.red import red_de_areas
 from .estructuras.arbol_bst import (
     construir_balanceado,
     a_lista,
@@ -42,6 +44,22 @@ class BusquedaTest(SimpleTestCase):
         raiz = construir_balanceado(datos)
         pasos = contar_pasos(raiz, 100)
         self.assertLessEqual(pasos, 7)
+
+
+class RedAreasTest(TestCase):
+    def test_red_es_dirigida(self):
+        mesa = Area.objects.create(nombre="Mesa de ayuda")
+        redes = Area.objects.create(nombre="Redes")
+        mesa.deriva_a.add(redes)
+        red = red_de_areas(Area.objects.order_by("nombre"))
+        self.assertEqual(red.vecinos("Mesa de ayuda"), ["Redes"])
+        self.assertEqual(red.vecinos("Redes"), [])
+
+    def test_area_sin_derivaciones(self):
+        seguridad = Area.objects.create(nombre="Seguridad")
+        red = red_de_areas(Area.objects.order_by("nombre"))
+        self.assertEqual(red.grado("Seguridad"), 0)
+        self.assertEqual(red.grado_entrada("Seguridad"), 0)
 
 
 class ColaUrgentesTest(TestCase):

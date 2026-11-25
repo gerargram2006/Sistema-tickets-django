@@ -3,11 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
-from .models import Ticket, Articulo
+from .models import Ticket, Articulo, Area
 from .forms import TicketForm
 from .historial import HistorialComentarios
 from django.contrib.auth.models import User
 from .estructuras.ranking import ranking_agentes
+from .estructuras.red import red_de_areas
 
 def buscar_articulo(titulo_buscado):
     # Se obtienen todos los artículos y se ordenan alfabéticamente
@@ -112,3 +113,20 @@ class TicketListView(LoginRequiredMixin, ListView):
 def tablero(request):
     agentes = User.objects.filter(groups__name="Agente")
     return render(request, "tickets/tablero.html", {"ranking": ranking_agentes(agentes)})
+
+
+@login_required
+def red_areas(request):
+    areas = Area.objects.order_by("nombre")
+    red = red_de_areas(areas)
+    filas = []
+    for i in range(len(red.nombres)):
+        nombre = red.nombres[i]
+        filas.append({
+            "nombre": nombre,
+            "valores": red.matriz[i],
+            "salen": red.grado(nombre),
+            "llegan": red.grado_entrada(nombre),
+        })
+    return render(request, "tickets/red_areas.html",
+                  {"nombres": red.nombres, "filas": filas})

@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Ticket, Usuario, Articulo, Categoria, Comentario
+from .models import Ticket, Usuario, Articulo, Categoria, Comentario, Area
+
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    filter_horizontal = ("deriva_a",)
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):

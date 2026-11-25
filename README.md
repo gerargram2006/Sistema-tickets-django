@@ -66,3 +66,36 @@ La postfija no necesita paréntesis ni precedencia, el árbol se construye con u
 | Cliente | cliente_prueba | Cliente123! |
 | Agente | agente_prueba | Agente123! |
 | Administrador | admin | Admin123! |
+
+## Red de derivación entre áreas
+
+```mermaid
+graph LR
+    MA[Mesa de ayuda] --> RE[Redes]
+    MA --> HW[Hardware]
+    MA --> SW[Software]
+    RE --> SEG[Seguridad]
+    HW --> MA
+    SW --> SEG
+    SW --> MA
+```
+
+## Diagrama de clases
+
+```mermaid
+classDiagram
+    Area "1" --> "*" Ticket : tickets
+    Area "*" --> "*" Area : deriva_a
+    User "1" --> "*" Ticket : creado_por
+    User "1" --> "*" Ticket : resuelto_por
+```
+
+## Preguntas Semana 15
+
+### a) ¿Por qué `deriva_a` usa `symmetrical=False`? ¿Qué pasaría con la matriz si fuera `True`?
+
+Porque las derivaciones son dirigidas (en un solo sentido): que Mesa de ayuda derive a Redes no significa que Redes derive a Mesa de ayuda. Si fuera `True`, Django guardaría la relación en ambos sentidos automáticamente y la matriz de adyacencia sería simétrica.
+
+### b) ¿Qué guarda cada fila de la tabla intermedia que crea el `ManyToManyField`?
+
+Guarda un par `(área de origen, área de destino)` usando sus claves primarias (`from_area_id`, `to_area_id`), que representa una arista dirigida del grafo.

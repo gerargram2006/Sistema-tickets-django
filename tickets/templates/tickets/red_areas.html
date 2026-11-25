@@ -1,0 +1,27 @@
+{% extends "tickets/base.html" %}
+
+{% block titulo %}Red de derivación entre áreas{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+  <h2>Red de derivación entre áreas</h2>
+  <p>1 = esta área puede derivar tickets a esa área</p>
+  <table class="table table-bordered text-center">
+    <tr>
+      <th>Desde \ Hacia</th>
+      {% for nombre in nombres %}<th>{{ nombre }}</th>{% endfor %}
+      <th>Salen</th><th>Llegan</th>
+    </tr>
+    {% for fila in filas %}
+    <tr>
+      <th>{{ fila.nombre }}</th>
+      {% for valor in fila.valores %}
+      <td {% if valor %}class="table-primary"{% endif %}>{{ valor }}</td>
+      {% endfor %}
+      <td>{{ fila.salen }}</td>
+      <td>{{ fila.llegan }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

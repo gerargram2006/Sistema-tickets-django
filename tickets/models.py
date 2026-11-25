@@ -27,6 +27,17 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+class Area(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    deriva_a = models.ManyToManyField(
+        "self", symmetrical=False, blank=True,
+        related_name="recibe_de",
+    )
+
+    def __str__(self):
+        return self.nombre
+
+
 class Ticket(models.Model):
     ESTADOS = (
         ("abierto", "Abierto"),
@@ -55,6 +66,10 @@ class Ticket(models.Model):
     )
     categoria = models.ForeignKey(
         Categoria, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    area = models.ForeignKey(
+        Area, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="tickets",
     )
 
     resuelto_por = models.ForeignKey(
