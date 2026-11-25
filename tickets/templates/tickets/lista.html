@@ -3,12 +3,13 @@
 {% block titulo %}Cola de Atención{% endblock %}
 
 {% block contenido %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2>
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Centro de soporte</span>
+        <h1>
             {% if es_agente %}Tickets urgentes{% else %}Mis tickets{% endif %}
-        </h2>
-        <p class="text-muted">
+        </h1>
+        <p>
             {% if es_agente %}
                 Cola priorizada por impacto, categoría y días de espera.
             {% else %}
@@ -16,56 +17,49 @@
             {% endif %}
         </p>
     </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-md-4">
-        <label for="filtro-estado" class="form-label">Filtrar por estado:</label>
+    <div class="filter-control">
+        <label for="filtro-estado">Filtrar por estado</label>
         <select id="filtro-estado" class="form-select" onchange="location.href='?estado=' + this.value">
             <option value="abierto" {% if estado_actual == 'abierto' %}selected{% endif %}>Abierto</option>
             <option value="en_progreso" {% if estado_actual == 'en_progreso' %}selected{% endif %}>En progreso</option>
             <option value="completado" {% if estado_actual == 'completado' %}selected{% endif %}>Completado</option>
         </select>
     </div>
-</div>
+</section>
 
 {% if tickets %}
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+<div class="ticket-grid">
     {% for ticket in tickets %}
-    <div class="col">
-        <div class="card h-100 shadow-sm">
+        <article class="ticket-card status-{{ ticket.estado }}">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h5 class="card-title mb-0">{{ ticket.titulo }}</h5>
-                    <span class="badge
-                        {% if ticket.estado == 'abierto' %}bg-warning text-dark
-                        {% elif ticket.estado == 'en_progreso' %}bg-info text-dark
-                        {% else %}bg-success{% endif %}">
+                <div class="ticket-card-top">
+                    <span class="ticket-number">Ticket #{{ ticket.id }}</span>
+                    <span class="status-pill
+                        {% if ticket.estado == 'abierto' %}status-open
+                        {% elif ticket.estado == 'en_progreso' %}status-progress
+                        {% else %}status-complete{% endif %}">
                         {{ ticket.get_estado_display }}
                     </span>
                 </div>
-                <p class="card-text small text-muted">{{ ticket.descripcion|truncatewords:12 }}</p>
-                <div class="d-flex flex-wrap gap-2 mb-2">
+                <h2>{{ ticket.titulo }}</h2>
+                <p class="ticket-description">{{ ticket.descripcion|truncatewords:14 }}</p>
+                <div class="ticket-meta">
                     {% if ticket.categoria %}
-                    <span class="badge bg-info text-dark">
-                        {{ ticket.categoria.nombre }} (peso {{ ticket.categoria.peso }})
-                    </span>
+                    <span><i>●</i> {{ ticket.categoria.nombre }}</span>
                     {% else %}
-                    <span class="badge bg-secondary">Sin categoría</span>
+                    <span><i>●</i> Sin categoría</span>
                     {% endif %}
-                    <span class="badge bg-dark">
-                        Prioridad {{ ticket.prioridad|floatformat:0 }}
-                    </span>
-                    <span class="badge bg-secondary">
-                        Agente: {{ ticket.agente_asignado|default:"Nadie" }}
-                    </span>
+                    <span><i>◎</i> Impacto {{ ticket.impacto }}/5</span>
                 </div>
             </div>
-            <div class="card-footer bg-transparent border-top">
-                <a href="{% url 'detalle_ticket' ticket.id %}" class="btn btn-sm btn-outline-primary w-100">Ver detalle</a>
+            <div class="ticket-card-footer">
+                <div>
+                    <small>Prioridad</small>
+                    <strong>{{ ticket.prioridad|floatformat:0 }}</strong>
+                </div>
+                <a href="{% url 'detalle_ticket' ticket.id %}" class="btn btn-card">Ver detalle <span>→</span></a>
             </div>
-        </div>
-    </div>
+        </article>
     {% endfor %}
 </div>
 {% else %}

@@ -3,13 +3,14 @@
 {% block titulo %}Todos los tickets{% endblock %}
 
 {% block contenido %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<section class="page-header">
     <div>
-        <h2 class="mb-1">Todos los tickets</h2>
-        <p class="text-muted mb-0">Listado completo paginado de 5 en 5.</p>
+        <span class="eyebrow">Inventario general</span>
+        <h1>Todos los tickets</h1>
+        <p>Listado completo paginado de 5 en 5.</p>
     </div>
     <a href="{% url 'lista_tickets' %}" class="btn btn-outline-secondary btn-sm">Volver al inicio</a>
-</div>
+</section>
 
 <div class="card shadow-sm mb-4">
     <ul class="list-group list-group-flush">

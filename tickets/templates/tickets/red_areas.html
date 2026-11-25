@@ -3,10 +3,16 @@
 {% block titulo %}Red de derivación entre áreas{% endblock %}
 
 {% block contenido %}
-<div class="container mt-4">
-  <h2>Red de derivación entre áreas</h2>
-  <p>1 = esta área puede derivar tickets a esa área</p>
-  <table class="table table-bordered text-center">
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Flujo operativo</span>
+    <h1>Red de derivación entre áreas</h1>
+    <p>Una relación marcada con <strong>1</strong> indica derivación permitida entre áreas.</p>
+  </div>
+</section>
+<div class="surface-card">
+  <div class="card-body table-responsive">
+  <table class="table table-bordered text-center align-middle mb-0">
     <tr>
       <th>Desde \ Hacia</th>
       {% for nombre in nombres %}<th>{{ nombre }}</th>{% endfor %}
@@ -23,5 +29,6 @@
     </tr>
     {% endfor %}
   </table>
+  </div>
 </div>
 {% endblock %}

@@ -1,9 +1,16 @@
 {% extends "tickets/base.html" %}
 
 {% block contenido %}
-<div class="container py-4">
-    <h1 class="mb-4">Ranking de agentes</h1>
-    <table class="table table-striped">
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Desempeño del equipo</span>
+        <h1>Ranking de agentes</h1>
+        <p>Tickets resueltos organizados por rendimiento.</p>
+    </div>
+</section>
+<div class="surface-card">
+    <div class="card-body">
+    <table class="table align-middle mb-0">
         <thead>
             <tr>
                 <th>Puesto</th>
@@ -23,5 +30,6 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 </div>
 {% endblock %}
